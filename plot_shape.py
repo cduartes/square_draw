@@ -5,7 +5,7 @@ from random import randint
 from matplotlib.path import Path
 import math
 
-def getIntersection(f,s):
+def get_intersection(f,s):
     path_f = Path(f.get_verts())
     path_s = Path(s.get_verts())
     pc = path_f.intersects_path(path_s, filled = False)
@@ -28,6 +28,24 @@ def getIntersection(f,s):
         return inter_box
     return None
 
+# TEMP: Should extract the info from contractions in ibex
+def read_data(fig,ax):
+    # Box to contract
+    box = patches.Rectangle((-9,-9),18,18,linewidth=1,edgecolor='r', fill = None)
+    # Add the patch to the Axes
+    ax.add_patch(box)
+
+    this_boxes = []
+    for a in range(0,3):
+        x_0 = randint(-9,9)
+        y_0 = randint(-9,9)
+        x_length = randint(1,10)
+        y_length = randint(1,10)
+        internal_rect = patches.Rectangle((x_0,y_0),x_length,y_length,linewidth=1,edgecolor='b', facecolor='none')
+        this_boxes.append(internal_rect)
+    return this_boxes
+
+
 def main():
     # Create figure and axes
     fig,ax = plt.subplots(1)
@@ -38,26 +56,12 @@ def main():
     plt.xlim(-10,10)
     plt.ylim(-10,10)
 
-    # Box to contract
-    boxes = []
-    intersections = []
-    box = patches.Rectangle((-9,-9),18,18,linewidth=1,edgecolor='r', fill = None)
-    # Add the patch to the Axes
-    ax.add_patch(box)
-
-    #TEMP: Should extract the info from contractions in ibex
-    for a in range(0,3):
-        x_0 = randint(-9,9)
-        y_0 = randint(-9,9)
-        x_length = randint(1,10)
-        y_length = randint(1,10)
-        internal_rect = patches.Rectangle((x_0,y_0),x_length,y_length,linewidth=1,edgecolor='b', facecolor='none')
-        boxes.append(internal_rect)
-
+    # REVIEW: 
+    boxes = read_data(fig,ax)
     for f in boxes:
         for s in boxes:
             if f != s:
-                inter = getIntersection(f,s)
+                inter = get_intersection(f,s)
                 if inter:
                     ax.add_patch(inter)
 
