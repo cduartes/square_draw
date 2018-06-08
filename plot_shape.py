@@ -1,9 +1,8 @@
-import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-from matplotlib.patches import Rectangle
-import numpy as np
-from random import randint
 from matplotlib.path import Path
+import matplotlib.pyplot as plt
+from random import randint
+import numpy as np
 import math
 
 def intersect(f,s):
@@ -26,13 +25,9 @@ def intersect(f,s):
             max_y = min(max_y,b.get_verts()[2][1])
         dist_x = abs(max_x-min_x)
         dist_y = abs(max_y-min_y)
-        inter_box = patches.Rectangle((min_x,min_y),dist_x,dist_y,linewidth=1,fill=True,color='Red')
+        inter_box = patches.Rectangle((min_x,min_y),dist_x,dist_y,linewidth=1,fill=True,color='r')
         return inter_box
     return None
-
-def get_newbox(intersections):
-    for i in intersections:
-        print(i.get_verts())
 
 # TODO
 def read_data():
@@ -51,14 +46,6 @@ def read_data():
         y_length = randint(1,6)
         internal_rect = patches.Rectangle((x_0,y_0),x_length,y_length,linewidth=1,fill=False, color="b")
         this_boxes.append(internal_rect)
-    """
-    rect1 = patches.Rectangle((2,2),5,2,linewidth=1,fill=False)
-    rect2 = patches.Rectangle((5,1),2,4,linewidth=1,fill=False)
-    rect3 = patches.Rectangle((1,1),5,3,linewidth=1,fill=False)
-    this_boxes.append(rect1)
-    this_boxes.append(rect2)
-    this_boxes.append(rect3)
-    """
     return box,this_boxes
 
 def main():
@@ -76,32 +63,24 @@ def main():
     plt.ylim(-10,10)
 
     box,boxes = read_data()
-    intersections = []
     # Add the patch to the Axes
     ax.add_patch(box)
     for f in boxes:
         for s in boxes:
             if f != s:
-                intersection = intersect(f,s)
-                
-                if intersection:
-                    intersections.append(intersect(f,s))
-                    print(intersection.get_verts())
-                    min_x = min(min_x,intersection.get_verts()[0][0])
-                    min_y = min(min_y,intersection.get_verts()[0][1])
-                    max_x = max(max_x,intersection.get_verts()[2][0])
-                    max_y = max(max_y,intersection.get_verts()[2][1])
-                    ax.add_patch(intersection)
+                this_intersection = intersect(f,s)
+                if this_intersection:
+                    min_x = min(min_x,this_intersection.get_verts()[0][0])
+                    min_y = min(min_y,this_intersection.get_verts()[0][1])
+                    max_x = max(max_x,this_intersection.get_verts()[2][0])
+                    max_y = max(max_y,this_intersection.get_verts()[2][1])
+                    ax.add_patch(this_intersection)
     # Show patches in plot.
     dist_x = abs(max_x-min_x)
     dist_y = abs(max_y-min_y)
-    new_box = patches.Rectangle((min_x,min_y),dist_x,dist_y,linewidth=2,linestyle='dashed',fill=None, color="g")
-    print(new_box.get_verts())
-    ax.add_patch(new_box)
-
-    print(intersections[0].get_verts())
-    #new_box2 = get_newbox(intersections)
-
+    new_box = patches.Rectangle((min_x,min_y),dist_x,dist_y,linewidth=2,linestyle='dashed',fill=None, color="r")
+    if new_box:
+        ax.add_patch(new_box)
     for b in boxes:
         ax.add_patch(b)
     plt.show()
