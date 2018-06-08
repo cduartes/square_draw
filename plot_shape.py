@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+from matplotlib.patches import Rectangle
 import numpy as np
 from random import randint
 from matplotlib.path import Path
@@ -25,28 +26,13 @@ def intersect(f,s):
             max_y = min(max_y,b.get_verts()[2][1])
         dist_x = abs(max_x-min_x)
         dist_y = abs(max_y-min_y)
-        inter_box = patches.Rectangle((min_x,min_y),dist_x,dist_y,linewidth=1,fill=False,color='Red')
+        inter_box = patches.Rectangle((min_x,min_y),dist_x,dist_y,linewidth=1,fill=True,color='Red')
         return inter_box
     return None
 
-def contract_box(this_boxes):
-    '''
-    Return a new patches.Rectangle that contains all intersections
-    '''
-    max_x = float("-inf")
-    max_y = float("-inf")
-    min_x = float("inf")
-    min_y = float("inf")
-    
-    for b in this_boxes:
-        max_x = max(max_x,patches.Rectangle(b).get_verts()[2][0])
-        max_y = max(max_y,b.get_verts()[2][1])
-        min_x = min(min_x,b.get_verts()[0][0])
-        min_y = min(min_y,b.get_verts()[0][1])
-    dist_x = abs(max_x-min_x)
-    dist_y = abs(max_y-min_y)
-    contracted = patches.Rectangle((min_x,min_y),dist_x,dist_y,linewidth=1,fill=True,color='Blue')
-    return contracted
+def get_newbox(intersections):
+    for i in intersections:
+        print(i.get_verts())
 
 # TODO
 def read_data():
@@ -54,17 +40,16 @@ def read_data():
     Reads data on file and returns a single patches.Rectangle as main box and a collection of patches.Rectangle's 
     '''
     # Box to contract
-    box = patches.Rectangle((-9,-9),18,18,linewidth=1,edgecolor='r', fill = None)
+    box = patches.Rectangle((-9,-9),18,18,linewidth=1,fill = None,color='r')
     this_boxes = []
 
-    """
     # TEMP: Should extract the info from contractions in ibex
-    for a in range(0,3):
-        x_0 = randint(-9,9)
-        y_0 = randint(-9,9)
-        x_length = randint(1,10)
-        y_length = randint(1,10)
-        internal_rect = patches.Rectangle((x_0,y_0),x_length,y_length,linewidth=1,fill=False)
+    for a in range(0,8):
+        x_0 = randint(-9,1)
+        y_0 = randint(-9,1)
+        x_length = randint(1,6)
+        y_length = randint(1,6)
+        internal_rect = patches.Rectangle((x_0,y_0),x_length,y_length,linewidth=1,fill=False, color="b")
         this_boxes.append(internal_rect)
     """
     rect1 = patches.Rectangle((2,2),5,2,linewidth=1,fill=False)
@@ -73,11 +58,15 @@ def read_data():
     this_boxes.append(rect1)
     this_boxes.append(rect2)
     this_boxes.append(rect3)
-
-
+    """
     return box,this_boxes
 
 def main():
+    min_x = float("inf")
+    min_y = float("inf")
+    max_x = float("-inf")
+    max_y = float("-inf")
+    
     # Create figure and axes
     fig,ax = plt.subplots(1)
     ax.grid(True, linestyle='dashed')
@@ -94,14 +83,27 @@ def main():
         for s in boxes:
             if f != s:
                 intersection = intersect(f,s)
-                print(intersection.get_verts())
+                
                 if intersection:
+                    intersections.append(intersect(f,s))
+                    print(intersection.get_verts())
+                    min_x = min(min_x,intersection.get_verts()[0][0])
+                    min_y = min(min_y,intersection.get_verts()[0][1])
+                    max_x = max(max_x,intersection.get_verts()[2][0])
+                    max_y = max(max_y,intersection.get_verts()[2][1])
                     ax.add_patch(intersection)
-                    intersections.append(intersection)
     # Show patches in plot.
+    dist_x = abs(max_x-min_x)
+    dist_y = abs(max_y-min_y)
+    new_box = patches.Rectangle((min_x,min_y),dist_x,dist_y,linewidth=2,linestyle='dashed',fill=None, color="g")
+    print(new_box.get_verts())
+    ax.add_patch(new_box)
+
+    print(intersections[0].get_verts())
+    #new_box2 = get_newbox(intersections)
+
     for b in boxes:
         ax.add_patch(b)
-    ax.add_patch(contract_box(intersections))
     plt.show()
 
 if __name__ == '__main__':
