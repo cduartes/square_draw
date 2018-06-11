@@ -43,6 +43,7 @@ def read_data():
             line = line.replace('[','')
             line = line.replace(']','')
             line = line.replace('\n','')
+            print(line)
             coords = line.split(';')
             print(i,'-',line)
             c = coords[0].split(',')
@@ -104,9 +105,10 @@ def main():
     # Show patches in plot.
     dist_x = abs(max_x-min_x)
     dist_y = abs(max_y-min_y)
-    new_box = patches.Rectangle((min_x,min_y),dist_x,dist_y,linewidth=2,linestyle='dashed',fill=None, color="r")
-    if new_box:
-        ax.add_patch(new_box)
+    if dist_x != float("inf") and dist_y != float("inf"):
+        new_box = patches.Rectangle((min_x,min_y),dist_x,dist_y,linewidth=2,linestyle='dashed',fill=None, color="r")
+        if new_box:
+            ax.add_patch(new_box)
     for b in boxes:
         ax.add_patch(b)
     plt.show()
