@@ -34,9 +34,34 @@ def read_data():
     '''
     Reads data on file and returns a single patches.Rectangle as main box and a collection of patches.Rectangle's 
     '''
+    this_boxes = []
+    with open("plot.txt") as f:
+        for i,line in enumerate(f):
+            line = line.replace('(','')
+            line = line.replace(')','')
+            line = line.replace(' ','')
+            line = line.replace('[','')
+            line = line.replace(']','')
+            line = line.replace('\n','')
+            coords = line.split(';')
+            print(i,'-',line)
+            c = coords[0].split(',')
+            x_0 = float(c[0])
+            x_1 = float(c[1])
+            c = coords[1].split(',')
+            y_0 = float(c[0])
+            y_1 = float(c[1])
+            x_length = abs(x_1-x_0)
+            y_length = abs(y_1-y_0)
+            if i == 0:
+                box = patches.Rectangle((x_0,y_0),x_length,y_length,linewidth=1,fill = None,color='r')
+            else:
+                internal_rect = patches.Rectangle((x_0,y_0),x_length,y_length,linewidth=1,fill=False, color="b")
+                this_boxes.append(internal_rect)
+
+    """                    
     # Box to contract
     box = patches.Rectangle((-9,-9),18,18,linewidth=1,fill = None,color='r')
-    this_boxes = []
 
     # TEMP: Should extract the info from contractions in ibex
     for a in range(0,8):
@@ -46,6 +71,7 @@ def read_data():
         y_length = randint(1,6)
         internal_rect = patches.Rectangle((x_0,y_0),x_length,y_length,linewidth=1,fill=False, color="b")
         this_boxes.append(internal_rect)
+    """
     return box,this_boxes
 
 def main():
